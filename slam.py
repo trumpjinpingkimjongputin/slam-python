@@ -41,7 +41,7 @@ def process_frame(img):
     # print(img.shape)
 
 if __name__ == "__main__":
-    cap = cv2.VideoCapture("test_1.mp4")
+    cap = cv2.VideoCapture("test_vid/test_1.mp4")
 
     while cap.isOpened():
         ret, frame= cap.read()
