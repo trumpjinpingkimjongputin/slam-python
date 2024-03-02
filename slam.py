@@ -14,25 +14,26 @@ display = pygame.display.set_mode((W, H))
 pygame.display.set_caption('SLAM_python') 
 surface = pygame.Surface((W,H)).convert()"""
 
-window = sdl2.ext.Window("SLAM_python_pysdl2", size=(W, H), position = (200,0))
-window.show()
+# window = sdl2.ext.Window("SLAM_python_pysdl2", size=(W, H), position = (200,0))
+# window.show()
 
+disp=Display(W ,H)
 
 def process_frame(img):
     # sdl based im2vid
     img = cv2.resize(img, (W,H))
-    events = sdl2.ext.get_events()
-    for event in events:
-        if event.type == sdl2.SDL_QUIT:
-            exit(0)
-    surf = sdl2.ext.pixels3d(window.get_surface())
-    surf[:,:,0:3] = img.swapaxes(0,1)
-    window.refresh()
+    # events = sdl2.ext.get_events()
+    # for event in events:
+    #     if event.type == sdl2.SDL_QUIT:
+    #         exit(0)
+    # surf = sdl2.ext.pixels3d(window.get_surface())
+    # surf[:,:,0:3] = img.swapaxes(0,1)
+    # window.refresh()
 
-    """
-    x=Display(W ,H)
-    x.paint(img)
-    """
+ 
+    
+    disp.paint(img)
+ 
 
     # cv2.imshow('image', img)
 
