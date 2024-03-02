@@ -1,12 +1,15 @@
 import cv2
 import numpy as np
 
-class FeatureExtractor(object):
+class Extractor(object):
     def __init__(self):
         self.GX = 16//2
         self.GY = 12//2
 
         self.orb = cv2.ORB_create(1000) 
+        self.last = None
+        self.bf = cv2.BFMatcher() # brute force matcher
+
     def extract(self, img):
 
         # cv2.detect had some problems here - features were only visible within small grid like spaces
@@ -29,6 +32,19 @@ class FeatureExtractor(object):
                     akp.append(p)
         return akp
         """
-
+        #detection
         feats = cv2.goodFeaturesToTrack(np.mean(img, axis=2).astype(np.uint8), 3000, qualityLevel=0.01, minDistance=3)
-        return feats
+        #extrcation
+        kps = [cv2.KeyPoint(x=f[0][0] ,y= f[0][1], size=20) for f in feats]
+        kps, des = self.orb.compute(img, kps)
+        #matching
+        matches = None
+        if self.last is not None:
+            matches = self.bf.match(des, self.last["des"])
+            print(matches)
+
+        self.last = {"kps":kps, "des":des}
+
+        # print(des)
+
+        return kps,des, matches
