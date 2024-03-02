@@ -1,5 +1,5 @@
 venv
 __pycache__
-test_2.mp4
-test_3.mp4
-test_4.mp4
+./test_2.mp4
+./test_3.mp4
+./test_4.mp4
