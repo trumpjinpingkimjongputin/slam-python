@@ -40,10 +40,10 @@ class Extractor(object):
         """
         #detection
         feats = cv2.goodFeaturesToTrack(np.mean(img, axis=2).astype(np.uint8), 3000, qualityLevel=0.01, minDistance=3)
-        #extrcation
+        #extraction
         kps = [cv2.KeyPoint(x=f[0][0] ,y= f[0][1], size=20) for f in feats]
         kps, des = self.orb.compute(img, kps)
-        #matching - not perfect here, some stupid matches
+        #matching - not perfect here, some stupid noise, but most is gone, mostly the courtesy of ransac+fundamental matrix transform
         ret =[]
         if self.last is not None:
             matches = self.bf.knnMatch(des, self.last["des"], k=2)
@@ -64,7 +64,8 @@ class Extractor(object):
                                     residual_threshold=1, 
                                     max_trials=100)
 
-            print(sum(inliers))
+            # notice difference without the inliers - try commenting it
+            ret = ret[inliers]
         self.last = {"kps":kps, "des":des}
 
         # print(des)
