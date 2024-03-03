@@ -1,6 +1,12 @@
 import cv2
 import numpy as np
 
+# Fundamental Matrix Estimation
+#https://scikit-image.org/docs/stable/auto_examples/transform/plot_fundamental_matrix.html
+from skimage.measure import ransac
+from skimage.transform import FundamentalMatrixTransform
+
+
 class Extractor(object):
     def __init__(self):
         self.GX = 16//2
@@ -43,9 +49,22 @@ class Extractor(object):
             matches = self.bf.knnMatch(des, self.last["des"], k=2)
             for m,n in matches:
                 if m.distance < 0.75*n.distance:
-                    ret.append((kps[m.queryIdx],self.last["kps"][m.trainIdx]))
-            # print(matches)
+                    kp1 = kps[m.queryIdx].pt
+                    kp2 = self.last["kps"][m.trainIdx].pt
+                    ret.append((kp1, kp2))
+            print((f"{len(matches)} matches"))
 
+        if len(ret) > 0 :
+            ret = np.array(ret)
+            print(ret.shape)
+            print(ret[:,0].shape)
+            model, inliers = ransac((ret[:, 0], ret[:, 1]),
+                                    FundamentalMatrixTransform, 
+                                    min_samples=8,
+                                    residual_threshold=1, 
+                                    max_trials=100)
+
+            print(sum(inliers))
         self.last = {"kps":kps, "des":des}
 
         # print(des)
