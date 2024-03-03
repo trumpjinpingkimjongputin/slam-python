@@ -21,11 +21,14 @@ def process_frame(img):
     # sdl based im2vid
 
     img = cv2.resize(img, (W,H))
-    kps, des, matches = fe.extract(img)
+    matches = fe.extract(img)
+  
     
-    for p in kps:
-        u,v = map(lambda x: int(round(x)), p.pt)
-        cv2.circle(img,(u,v), color=(0,255,0), radius = 3)
+    for pt1, pt2 in matches:
+        u1,v1 = map(lambda x: int(round(x)), pt1.pt)
+        u2,v2 = map(lambda x: int(round(x)), pt2.pt)
+        cv2.circle(img,(u1,v1), color=(0,255,0), radius = 3)
+        cv2.line(img, (u1,v1), (u2,v2), color=(255,0,0))
         # print(f)
 
 

@@ -6,9 +6,9 @@ class Extractor(object):
         self.GX = 16//2
         self.GY = 12//2
 
-        self.orb = cv2.ORB_create(1000) 
+        self.orb = cv2.ORB_create() 
         self.last = None
-        self.bf = cv2.BFMatcher() # brute force matcher
+        self.bf = cv2.BFMatcher(cv2.NORM_HAMMING) # brute force matcher - used for matching the features of the first image with another image.
 
     def extract(self, img):
 
@@ -37,14 +37,18 @@ class Extractor(object):
         #extrcation
         kps = [cv2.KeyPoint(x=f[0][0] ,y= f[0][1], size=20) for f in feats]
         kps, des = self.orb.compute(img, kps)
-        #matching
-        matches = None
+        #matching - not perfect here, some stupid matches
+        ret =[]
         if self.last is not None:
-            matches = self.bf.match(des, self.last["des"])
-            print(matches)
+            matches = self.bf.knnMatch(des, self.last["des"], k=2)
+            for m,n in matches:
+                if m.distance < 0.75*n.distance:
+                    ret.append((kps[m.queryIdx],self.last["kps"][m.trainIdx]))
+            # print(matches)
 
         self.last = {"kps":kps, "des":des}
 
         # print(des)
 
-        return kps,des, matches
+        # We do this for DMatch - for maching keypoint descriptors
+        return ret
