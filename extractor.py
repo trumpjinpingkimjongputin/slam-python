@@ -42,7 +42,7 @@ class Extractor(object):
         feats = cv2.goodFeaturesToTrack(np.mean(img, axis=2).astype(np.uint8), 3000, qualityLevel=0.01, minDistance=3)
         #extraction
         kps = [cv2.KeyPoint(x=f[0][0] ,y= f[0][1], size=20) for f in feats]
-        kps, des = self.orb.compute(img, kps)
+        kps, des = self.orb.compute(img, kps) #descriptors used to compare keypoints
         #matching - not perfect here, some stupid noise, but most is gone, mostly the courtesy of ransac+fundamental matrix transform
         ret =[]
         if self.last is not None:
